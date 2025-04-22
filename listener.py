@@ -49,7 +49,8 @@ def scan_blocks(chain, start_block, end_block, contract_address, eventfile='depo
         print( f"Scanning block {start_block} on {chain}" )
     else:
         print( f"Scanning blocks {start_block} - {end_block} on {chain}" )
-    
+
+    log_file_exists = Path(eventfile).is_file()
     log_data = []
 
     if end_block - start_block < 30:
@@ -92,6 +93,9 @@ def scan_blocks(chain, start_block, end_block, contract_address, eventfile='depo
                 }
                 log_data.append(data)
     
-        if log_data:
-            df = pd.DataFrame(log_data)
+    if log_data:
+        df = pd.DataFrame(log_data)
+        if log_file_exists:
             df.to_csv(eventfile, mode='a', header=False, index=False)
+        else:
+            df.to_csv(eventfile, mode='w', header=True, index=False)
